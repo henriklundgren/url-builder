@@ -21,7 +21,7 @@
 macro_rules! url_builder {
     ($($var:expr);*$(;)?) => {
         {
-            let mut builder = crate::UrlBuilder::default();
+            let mut builder = $crate::UrlBuilder::default();
             $(
                 builder.set($var);
             )*
