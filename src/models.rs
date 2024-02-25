@@ -37,7 +37,7 @@ impl UrlBuilder {
                 scheme: s,
                 host: h,
                 ..
-        } = self;
+            } = self;
             let base_url = [s, h].join(SCHEME_AFFIX);
             Url::parse(&base_url)?
         };
