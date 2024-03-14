@@ -56,22 +56,29 @@ impl UrlBuilder {
 
     pub fn set(&mut self, part: Part) -> &mut Self {
         match part {
-            Part::Scheme(value) => self.scheme = value.to_owned(),
+            Part::Scheme(value) => {
+                self.scheme = value.to_owned();
+            }
             Part::Host(value) => {
                 self.host = value.to_owned();
-            },
+            }
             Part::HostIpv4(value) => {
                 self.host = value.to_string();
-            },
-            Part::Port(value) => self.port = Some(value),
-            Part::Path(value) => self.path = Some(value.into()),
+            }
+            Part::Port(value) => {
+                self.port = Some(value);
+            }
+            Part::Path(value) => {
+                self.path = Some(value.into());
+            }
             Part::PathSlice(value) => {
                 self.path = Some(value.join("/").into());
             }
             Part::Query(value) => {
                 self.query = Some(qs::stringify(value.to_vec()));
-            },
+            }
         };
+
         self
     }
 }
