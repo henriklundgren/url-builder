@@ -20,6 +20,7 @@ pub enum Part<'a> {
     HostIpv4(Ipv4Addr),
     Port(u16),
     Path(&'a str),
+    PathSlice(&'a [&'a str]),
     Query(&'a [(&'a str, &'a str)]),
 }
 
@@ -64,6 +65,9 @@ impl UrlBuilder {
             },
             Part::Port(value) => self.port = Some(value),
             Part::Path(value) => self.path = Some(value.into()),
+            Part::PathSlice(value) => {
+                self.path = Some(value.join("/").into());
+            }
             Part::Query(value) => {
                 self.query = Some(qs::stringify(value.to_vec()));
             },
@@ -82,7 +86,7 @@ mod tests {
         let scheme = "https";
         let host = Ipv4Addr::new(192, 168, 0, 11);
         let port = 3000_u16;
-        let path = "/my/path/here";
+        let path = &["my", "path", "here"];
         let query = &[
             ("try", "true")
         ];
@@ -93,7 +97,7 @@ mod tests {
             .set(Part::Scheme(scheme))
             .set(Part::HostIpv4(host))
             .set(Part::Port(port))
-            .set(Part::Path(path))
+            .set(Part::PathSlice(path))
             .set(Part::Query(query));
 
         let result = builder.try_build().unwrap();
@@ -101,7 +105,7 @@ mod tests {
         assert_eq!(result.scheme(), scheme);
         assert_eq!(result.host().to_owned().unwrap(), url::Host::parse(&host.to_string()).unwrap());
         assert_eq!(result.port().unwrap(), port);
-        assert_eq!(result.path(), path);
+        assert_eq!(result.path(), "/my/path/here");
         assert_eq!(result.query().unwrap(), "try=true&");
     }
 }
